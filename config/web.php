@@ -11,7 +11,40 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'user' => 'app\modules\user\Module',
+        'home' => 'app\modules\home\Module'
+    ],
+    'defaultRoute' => 'home/',
     'components' => [
+        'i18n' => [
+            'translations' => [
+                'yii2mod.user' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@yii2mod/user/messages',
+                ],
+            ],
+        ],
+        'assetManager' => [
+            'class' => 'yii\web\AssetManager',
+            'bundles' => [
+                'yii\web\JqueryAsset' => [
+                    'js' => [
+                        'jquery.min.js'
+                    ]
+                ],
+                'yii\bootstrap\BootstrapAsset' => [
+                    'css' => [
+                        'css/bootstrap.min.css',
+                    ]
+                ],
+                'yii\bootstrap\BootstrapPluginAsset' => [
+                    'js' => [
+                        'js/bootstrap.min.js',
+                    ]
+                ]
+            ],
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'zBj8BNdc0Ja6sVjiahCpXWyGy4UoaPdN',
@@ -20,8 +53,11 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'identityClass' => 'yii2mod\user\models\UserModel',
+            // for update last login date for user, you can call the `afterLogin` event as follows
+            'on afterLogin' => function ($event) {
+                $event->identity->updateLastLogin();
+            }
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -43,14 +79,13 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'user/<action>' => 'user/default/<action>'
             ],
         ],
-        */
     ],
     'params' => $params,
 ];
