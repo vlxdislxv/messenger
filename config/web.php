@@ -38,7 +38,17 @@ $config = [
                         'css/bootstrap.min.css',
                     ]
                 ],
+                'yii\bootstrap4\BootstrapAsset' => [
+                    'css' => [
+                        'css/bootstrap.min.css',
+                    ]
+                ],
                 'yii\bootstrap\BootstrapPluginAsset' => [
+                    'js' => [
+                        'js/bootstrap.min.js',
+                    ]
+                ],
+                'yii\bootstrap4\BootstrapPluginAsset' => [
                     'js' => [
                         'js/bootstrap.min.js',
                     ]
@@ -53,7 +63,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'yii2mod\user\models\UserModel',
+            'identityClass' => 'app\modules\user\models\User',
             // for update last login date for user, you can call the `afterLogin` event as follows
             'on afterLogin' => function ($event) {
                 $event->identity->updateLastLogin();

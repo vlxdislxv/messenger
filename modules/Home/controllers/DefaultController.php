@@ -14,6 +14,6 @@ class DefaultController extends Controller
 {
     public function actionIndex()
     {
-        return 'home';
+        return $this->render('index');
     }
 }
