@@ -4,6 +4,8 @@ use \app\modules\home\assets\DefaultAsset;
 
 $theme = DefaultAsset::register($this);
 
+$this->title = 'Home';
+
 ?>
 
 <div class="container-fluid h-100">
