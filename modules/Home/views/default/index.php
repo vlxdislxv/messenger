@@ -13,7 +13,8 @@ $this->title = 'Home';
         <div class="col-md-4 col-xl-3 chat"><div class="card mb-sm-3 mb-md-0 contacts_card">
                 <div class="card-header">
                     <div class="input-group">
-                        <input type="text" placeholder="Search..." name="" class="form-control search">
+                        <input id="contact_search" type="text" placeholder="Search..."
+                               name="UserSearch[username]" class="form-control search" value="">
                         <div class="input-group-prepend">
                             <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
                         </div>
@@ -22,30 +23,18 @@ $this->title = 'Home';
                 <div class="card-body contacts_body scrollbar scrollbar-primary">
                     <ui class="contacts">
 <!--                        <li class="active">-->
-                        <li>
-                            <div class="d-flex bd-highlight">
-                                <div class="img_cont">
-                                    <img src="../img/no-avatar.png" class="rounded-circle user_img">
-                                    <span class="online_icon"></span>
-                                </div>
-                                <div class="user_info">
-                                    <span>USERNAME</span>
-                                    <p>STATUS</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="d-flex bd-highlight">
-                                <div class="img_cont">
-                                    <img src="../img/no-avatar.png" class="rounded-circle user_img">
-                                    <span class="online_icon offline"></span>
-                                </div>
-                                <div class="user_info">
-                                    <span>USERNAME</span>
-                                    <p>STATUS</p>
-                                </div>
-                            </div>
-                        </li>
+<!--                        <li>-->
+<!--                            <div class="d-flex bd-highlight">-->
+<!--                                <div class="img_cont">-->
+<!--                                    <img src="../img/no-avatar.png" class="rounded-circle user_img">-->
+<!--                                    <span class="online_icon"></span>-->
+<!--                                </div>-->
+<!--                                <div class="user_info">-->
+<!--                                    <span>USERNAME</span>-->
+<!--                                    <p>STATUS</p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </li>-->
                     </ui>
                 </div>
                 <div class="card-footer"></div>

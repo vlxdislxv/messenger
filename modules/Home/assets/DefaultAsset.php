@@ -17,12 +17,13 @@ class DefaultAsset extends AssetBundle
     {
         parent::init();
 
-        \Yii::$app->assetManager->bundles['yii\\web\\JqueryAsset'] = [
-            'js' => ['jquery.slim.min.js']
-        ];
+//        \Yii::$app->assetManager->bundles['yii\\web\\JqueryAsset'] = [
+//            'js' => ['jquery.slim.min.js']
+//        ];
     }
 
     public $js = [
+        'js/main.js'
     ];
 
     public $depends = [
