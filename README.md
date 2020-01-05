@@ -8,5 +8,7 @@
 <br>
 <br>
 <h1>Installation</h1>
-<p>1. In CMD: </p>
+<p>1. In CMD (root path): </p>
+<pre><code>composer install</code></pre>
 <pre><code>php yii migrate/up --migrationPath=@vendor/yii2mod/yii2-user/migrations</code></pre>
+<pre><code>php yii migrate</code></pre>
