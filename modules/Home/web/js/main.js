@@ -33,6 +33,7 @@ var getMessageTemplate = '<div class="d-flex justify-content-start mb-4">\n' +
 var allUserChatsMessages = [];
 var currentChatMessages = [];
 var currUserId = null;
+var chatChanged = false;
 
 var currentChatId = null;
 var currentReceiverName = null;
@@ -71,14 +72,16 @@ function searchContact(str) {
     });
 }
 
-function selectChat (el) {
+function selectChat(el) {
     let chatId = $(el).attr('data-chat-id');
 
     currentReceiverName = $(el).attr('data-receiver-name');
 
     chatWithBlock[0].innerHTML = 'Chat with ' + currentReceiverName;
 
+    chatChanged = true;
     if (chatId === 'null') {
+        $('#messages_block').empty();
         currentChatId = null;
     } else {
         currentChatId = chatId;
@@ -103,26 +106,26 @@ function sendMsg(msg) {
             'CorrespondenceMessage[text]': msg,
         },
         success: function (response) {
-            // if (response.success) {
-            //     let data = response.data;
-            //     contactsBlock.empty();
-            //     for (let i = 0; i < data.length; i++) {
-            //         contactsBlock.append(contactTemplate
-            //             .replace('{username}', data[i].username)
-            //             .replace('{chat_id}', data[i].correspondence__id));
-            //     }
-            // }
+            if (response.success) {
+                if (response.data.correspondence__id) {
+                    currentChatId = response.data.correspondence__id;
+                }
+                chatChanged = true;
+                $('li[data-receiver-name="' + currentReceiverName + '"]').attr('data-chat-id', currentChatId);
+            }
         }
     });
 }
 
 $('#send_msg').click(function () {
     sendMsg(msgInput.val());
+    msgInput.val('');
 });
 
 msgInput.keydown(function (ev) {
     if (ev.keyCode === 13) {
         sendMsg(msgInput.val());
+        msgInput.val('');
     }
 });
 
@@ -143,16 +146,29 @@ function getAllUserChatsMessages() {
 function updateCurrentChat() {
     if (currentChatId != null) {
         let currChat = [];
+        let makeChange = false;
+        let crcIndex = 0;
 
         for (let i = 0; i < allUserChatsMessages.length; i++) {
-            if (allUserChatsMessages[i].correspondence__id === currentChatId) {
+            if (allUserChatsMessages[i].correspondence__id == currentChatId) {
                 currChat.push(allUserChatsMessages[i]);
+                if (currentChatMessages[crcIndex] !== undefined) {
+                    if (currChat[crcIndex].text !== currentChatMessages[crcIndex].text) {
+                        makeChange = true;
+                    }
+                } else {
+                    makeChange = true;
+                }
+                crcIndex++;
             }
         }
 
-        if (currentChatMessages.toString() !== currChat.toString()) {
+        if (makeChange || chatChanged) {
+            chatChanged = false;
             currentChatMessages = currChat;
 
+
+            console.log(currentChatMessages);
             messagesBlock.empty();
 
             for (let i = 0; i < currentChatMessages.length; i++) {
@@ -176,10 +192,8 @@ function updateCurrentChat() {
     }
 }
 
-// setInterval(function () {
-//     getAllUserChatsMessages();
-// }, 1000);
-
-getAllUserChatsMessages();
+setInterval(function () {
+    getAllUserChatsMessages();
+}, 1000);
 
 searchContact('');

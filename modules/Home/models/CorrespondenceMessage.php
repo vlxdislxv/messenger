@@ -76,7 +76,7 @@ class CorrespondenceMessage extends \yii\db\ActiveRecord
 
                     if ($correspondence->createNewChat([Yii::$app->user->identity, $receiver])) {
                         $this->correspondence__id = $correspondence->id;
-                        $returnData = ['correspondence_id' => $correspondence->id];
+                        $returnData = ['correspondence__id' => $correspondence->id];
                     } else {
                         $exception = true;
                     }
@@ -89,6 +89,8 @@ class CorrespondenceMessage extends \yii\db\ActiveRecord
                 ->andFilterWhere(['=', 'user__id', $this->user__id])
                 ->andFilterWhere(['=', 'correspondence__id', $this->correspondence__id])
                 ->one();
+
+            $returnData = [];
 
             // !$correspondence = чат не найден
             $exception = !$correspondence;
