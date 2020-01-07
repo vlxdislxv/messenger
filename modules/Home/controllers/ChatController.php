@@ -37,4 +37,11 @@ class ChatController extends Controller
 
         return ['success' => $success, 'data' => $data];
     }
+
+    function actionGetMessages()
+        {
+        $data = Yii::$app->user->identity->getAllUserChatsMessages(true);
+
+        return ['success' => true, 'current_user' => Yii::$app->user->id, 'data' => $data];
+    }
 }

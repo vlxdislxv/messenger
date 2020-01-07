@@ -41,7 +41,7 @@ $this->title = 'Home';
             </div></div>
         <div class="col-md-8 col-xl-6 chat">
             <div class="card">
-                <div class="card-header msg_head d-none">
+                <div id="msg_header" class="card-header msg_head d-none">
                     <div class="d-flex bd-highlight">
                         <div class="img_cont">
                             <img src="../img/no-avatar.png" class="rounded-circle user_img">
@@ -53,7 +53,7 @@ $this->title = 'Home';
                         </div>
                     </div>
                 </div>
-                <div class="card-body msg_card_body">
+                <div id="messages_block" class="card-body msg_card_body">
                     <div class="h-100 w-100 d-flex justify-content-center align-items-center">
                         <h1 class="d-flex flex-column align-items-center" style="color: white">
                             <p id="select_msg">Select The Chat</p>

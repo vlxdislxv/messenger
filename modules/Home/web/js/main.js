@@ -30,10 +30,15 @@ var getMessageTemplate = '<div class="d-flex justify-content-start mb-4">\n' +
     '                            <span class="msg_time">{time}</span>\n' +
     '                        </div>\n' +
     '                    </div>';
+var allUserChatsMessages = [];
+var currentChatMessages = [];
+var currUserId = null;
 
 var currentChatId = null;
 var currentReceiverName = null;
 var msgInput = $('#msg');
+var chatWithBlock = $('#chat_with');
+var messagesBlock = $('#messages_block');
 
 var contactsBlock = $('.contacts');
 
@@ -71,15 +76,18 @@ function selectChat (el) {
 
     currentReceiverName = $(el).attr('data-receiver-name');
 
+    chatWithBlock[0].innerHTML = 'Chat with ' + currentReceiverName;
+
     if (chatId === 'null') {
         currentChatId = null;
-
-        $('#select_msg').remove();
-
-        $('#msg_block').removeClass('d-none');
     } else {
         currentChatId = chatId;
+        updateCurrentChat();
     }
+
+    $('#select_msg').remove();
+    $('#msg_block').removeClass('d-none');
+    $('#msg_header').removeClass('d-none');
 }
 
 function sendMsg(msg) {
@@ -117,5 +125,61 @@ msgInput.keydown(function (ev) {
         sendMsg(msgInput.val());
     }
 });
+
+function getAllUserChatsMessages() {
+    $.ajax({
+        url: '/home/chat/get-messages',
+        type: 'GET',
+        success: function (response) {
+            if (response.success) {
+                currUserId = response.current_user;
+                allUserChatsMessages = response.data;
+                updateCurrentChat();
+            }
+        }
+    });
+}
+
+function updateCurrentChat() {
+    if (currentChatId != null) {
+        let currChat = [];
+
+        for (let i = 0; i < allUserChatsMessages.length; i++) {
+            if (allUserChatsMessages[i].correspondence__id === currentChatId) {
+                currChat.push(allUserChatsMessages[i]);
+            }
+        }
+
+        if (currentChatMessages.toString() !== currChat.toString()) {
+            currentChatMessages = currChat;
+
+            messagesBlock.empty();
+
+            for (let i = 0; i < currentChatMessages.length; i++) {
+                if (currentChatMessages[i].user__id == currUserId) {
+                    let tempCopy = sendMessageTemplate;
+                    messagesBlock.append(
+                        tempCopy
+                            .replace('{message}', currentChatMessages[i].text)
+                            .replace('{time}', currentChatMessages[i].time)
+                    );
+                } else {
+                    let tempCopy = getMessageTemplate;
+                    messagesBlock.append(
+                        tempCopy
+                            .replace('{message}', currentChatMessages[i].text)
+                            .replace('{time}', currentChatMessages[i].time)
+                    );
+                }
+            }
+        }
+    }
+}
+
+// setInterval(function () {
+//     getAllUserChatsMessages();
+// }, 1000);
+
+getAllUserChatsMessages();
 
 searchContact('');
