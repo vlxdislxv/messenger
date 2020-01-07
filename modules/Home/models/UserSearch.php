@@ -61,8 +61,13 @@ class UserSearch extends User
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['like', 'username', $this->username.'%', false])
-              ->andFilterWhere(['!=', 'username', Yii::$app->user->identity->username]);
+        if ($this->username === '') {
+            $query->andFilterWhere(['!=', 'user__id', 'null']);
+        } else {
+            $query->andFilterWhere(['like', 'username', $this->username.'%', false]);
+        }
+
+        $query->andFilterWhere(['!=', 'username', Yii::$app->user->identity->username]);
 
         return $dataProvider;
     }

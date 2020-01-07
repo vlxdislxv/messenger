@@ -41,46 +41,35 @@ $this->title = 'Home';
             </div></div>
         <div class="col-md-8 col-xl-6 chat">
             <div class="card">
-                <div class="card-header msg_head">
+                <div class="card-header msg_head d-none">
                     <div class="d-flex bd-highlight">
                         <div class="img_cont">
                             <img src="../img/no-avatar.png" class="rounded-circle user_img">
                             <span class="online_icon"></span>
                         </div>
                         <div class="user_info">
-                            <span>Chat with USERNAME</span>
-                            <p>COUNT Messages</p>
+                            <span id="chat_with">Chat with USERNAME</span>
+                            <p id="msg_count">COUNT Messages</p>
                         </div>
                     </div>
                 </div>
                 <div class="card-body msg_card_body">
-                    <div class="d-flex justify-content-end mb-4">
-                        <div class="msg_cotainer_send">
-                            Message
-                            <span class="msg_time_send">Time, Yesterday</span>
-                        </div>
-                        <div class="img_cont_msg">
-                            <img src="../img/no-avatar.png" class="rounded-circle user_img_msg">
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-start mb-4">
-                        <div class="img_cont_msg">
-                            <img src="../img/no-avatar.png" class="rounded-circle user_img_msg">
-                        </div>
-                        <div class="msg_cotainer">
-                            Message
-                            <span class="msg_time">Time, Yesterday</span>
-                        </div>
+                    <div class="h-100 w-100 d-flex justify-content-center align-items-center">
+                        <h1 class="d-flex flex-column align-items-center" style="color: white">
+                            <p id="select_msg">Select The Chat</p>
+                            <hr>
+                            <i class="fas fa-comments"></i>
+                        </h1>
                     </div>
                 </div>
-                <div class="card-footer">
+                <div id="msg_block" class="card-footer d-none">
                     <div class="input-group">
                         <div class="input-group-append">
-                            <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+                            <span onclick="alert('В разработке')" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
                         </div>
-                        <input name="" class="form-control type_msg" placeholder="Type your message...">
+                        <input id="msg" name="" class="form-control type_msg" placeholder="Type your message...">
                         <div class="input-group-append">
-                            <span class="input-group-text send_btn"><i class="fas fa-paper-plane"></i></span>
+                            <span id="send_msg" class="input-group-text send_btn"><i class="fas fa-paper-plane"></i></span>
                         </div>
                     </div>
                 </div>

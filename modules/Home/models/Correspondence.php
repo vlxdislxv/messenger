@@ -45,6 +45,48 @@ class Correspondence extends \yii\db\ActiveRecord
         ];
     }
 
+    public function createNewChat(array $users)
+    {
+        // для 2 пользователей
+
+        $create = false;
+
+        if ($create = !$this->isChatExists($users)) {
+            if ($create = $this->save()) {
+                foreach ($users as $user) {
+                    $userCorrespondence = new UserCorrespondence();
+
+                    $userCorrespondence->user__id = $user->id;
+                    $userCorrespondence->correspondence__id = $this->id;
+
+                    $userCorrespondence->save();
+                }
+            }
+        }
+
+        return $create;
+    }
+
+    public function isChatExists(array $users)
+    {
+        $subQ1 = UserCorrespondence::find()
+            ->select('id')
+            ->andFilterWhere(['in', 'user__id', [$users[0]->id, $users[1]->id]])
+            ->groupBy('correspondence__id');
+
+        $subQ2 = UserCorrespondence::find()
+            ->select('id')
+            ->andFilterWhere(['in', 'user__id', [$users[0]->id, $users[1]->id]]);
+
+        $count1 = UserCorrespondence::find()
+            ->from($subQ1)->count();
+
+        $count2 = UserCorrespondence::find()
+            ->from($subQ2)->count();
+
+        return $count1 < $count2;
+    }
+
     /**
      * @return ActiveQuery
      */

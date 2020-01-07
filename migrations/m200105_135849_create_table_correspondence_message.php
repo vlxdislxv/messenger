@@ -15,10 +15,26 @@ class m200105_135849_create_table_correspondence_message extends Migration
     {
         $this->createTable('correspondence_message', [
             'id' => Schema::TYPE_PK,
-            'text' => $this->string()->notNull(),
+            'user__id' => $this->integer()->notNull(),
             'correspondence__id' => $this->integer()->notNull(),
+            'text' => $this->string()->notNull(),
             'created_at' => $this->dateTime()
         ]);
+
+        $this->createIndex(
+            'idx-correspondence_message-user__id',
+            'correspondence_message',
+            'user__id'
+        );
+
+        $this->addForeignKey(
+            'fk-correspondence_message-user__id',
+            'correspondence_message',
+            'user__id',
+            'user',
+            'id',
+            'CASCADE'
+        );
 
         $this->createIndex(
             'idx-correspondence_message-correspondence__id',

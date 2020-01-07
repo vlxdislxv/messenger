@@ -51,7 +51,7 @@ class m200105_144336_create_table_user_correspondence extends Migration
      */
     public function safeDown()
     {
-
+        $this->dropTable('user_correspondence');
     }
 
     /*

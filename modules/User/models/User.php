@@ -3,6 +3,7 @@
 
 namespace app\modules\user\models;
 
+use app\modules\home\models\CorrespondenceMessage;
 use app\modules\home\models\UserCorrespondence;
 use yii2mod\user\models\UserModel;
 use \yii\db\ActiveQuery;
@@ -25,6 +26,15 @@ use Yii;
  */
 class User extends UserModel
 {
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getCorrespondenceMessages()
+    {
+        return $this->hasMany(CorrespondenceMessage::className(), ['correspondence__id' => 'id']);
+    }
+
     /**
      * @return ActiveQuery
      */
