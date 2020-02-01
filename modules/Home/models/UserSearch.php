@@ -49,7 +49,7 @@ class UserSearch extends User
                 ->andFilterWhere(['=', 'user__id', Yii::$app->user->id]);
 
             $query1 = User::find()
-                ->select('username, correspondence__id')
+                ->select('user.id as id, username, correspondence__id')
                 ->joinWith('userCorrespondences')
                 ->andFilterWhere(['!=', 'user__id', Yii::$app->user->id])
                 ->andFilterWhere(['in', 'correspondence__id', $subQ1])
@@ -57,7 +57,7 @@ class UserSearch extends User
                 ->asArray();
 
             $query = User::find()
-                ->select(['username', new Expression('(NULL) AS correspondence__id')])
+                ->select(['user.id as id', 'username', new Expression('(NULL) AS correspondence__id')])
                 ->asArray();
 
             $subQ = User::find()
@@ -95,7 +95,7 @@ class UserSearch extends User
                 ->andFilterWhere(['=', 'user__id', Yii::$app->user->id]);
 
             $query = User::find()
-                ->select('username, correspondence__id')
+                ->select('user.id as id, username, correspondence__id')
                 ->joinWith('userCorrespondences')
                 ->andFilterWhere(['!=', 'user__id', Yii::$app->user->id])
                 ->andFilterWhere(['in', 'correspondence__id', $subQ])

@@ -4,7 +4,10 @@ namespace app\modules\home\models;
 
 use app\modules\user\models\User;
 use Yii;
-use \yii\db\ActiveQuery;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
+use yii\db\Expression;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "correspondence_message".
@@ -17,7 +20,7 @@ use \yii\db\ActiveQuery;
  *
  * @property Correspondence $correspondence
  */
-class CorrespondenceMessage extends \yii\db\ActiveRecord
+class CorrespondenceMessage extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -25,6 +28,18 @@ class CorrespondenceMessage extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'correspondence_message';
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => null,
+                'value' => new Expression('NOW()'),
+            ],
+        ];
     }
 
     /**
