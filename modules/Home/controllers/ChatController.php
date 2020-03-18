@@ -5,12 +5,18 @@ namespace app\modules\home\controllers;
 
 use app\modules\home\models\CorrespondenceMessage;
 use app\modules\home\models\UserSearch;
+use yii\base\InvalidConfigException;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\Response;
 use Yii;
 
 class ChatController extends Controller
 {
+    /**
+     * @throws BadRequestHttpException
+     * {@inheritdoc}
+     */
     function beforeAction($action)
     {
         if (!parent::beforeAction($action)) return false;
@@ -20,11 +26,14 @@ class ChatController extends Controller
         return Yii::$app->request->isAjax;
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     function actionFindChat()
     {
         $searchModel = new UserSearch();
 
-        $data = $searchModel->search(Yii::$app->request->queryParams)->getModels();
+        $data = $searchModel->search(Yii::$app->request->queryParams);
 
         return ['success' => true, 'data' => $data];
     }

@@ -2,8 +2,11 @@
 
 namespace app\modules\home\models;
 
+use app\modules\user\models\User;
+use yii\base\InvalidConfigException;
 use Yii;
 use \yii\db\ActiveQuery;
+use yii\db\Exception;
 
 /**
  * This is the model class for table "correspondence".
@@ -49,8 +52,6 @@ class Correspondence extends \yii\db\ActiveRecord
     {
         // для 2 пользователей
 
-        $create = false;
-
         if ($create = !$this->isChatExists($users)) {
             if ($create = $this->save()) {
                 foreach ($users as $user) {
@@ -67,22 +68,29 @@ class Correspondence extends \yii\db\ActiveRecord
         return $create;
     }
 
+    /**
+     * @param User[] $users
+     * @return bool
+     */
     public function isChatExists(array $users)
     {
-        $subQ1 = UserCorrespondence::find()
-            ->select('id')
-            ->andFilterWhere(['in', 'user__id', [$users[0]->id, $users[1]->id]])
-            ->groupBy('correspondence__id');
+        // чат может быть только между 2 пользователями, больше = беседа
+        $usersIDs = [];
 
-        $subQ2 = UserCorrespondence::find()
-            ->select('id')
-            ->andFilterWhere(['in', 'user__id', [$users[0]->id, $users[1]->id]]);
+        foreach ($users as $user) {
+            $usersIDs[] = $user->id;
+        }
 
         $count1 = UserCorrespondence::find()
-            ->from($subQ1)->count();
+            ->select('id')
+            ->andFilterWhere(['in', 'user__id', $usersIDs])
+            ->groupBy('correspondence__id')
+            ->count();
 
         $count2 = UserCorrespondence::find()
-            ->from($subQ2)->count();
+            ->select('id')
+            ->andFilterWhere(['in', 'user__id', $usersIDs])
+            ->count();
 
         return $count1 < $count2;
     }
@@ -90,9 +98,19 @@ class Correspondence extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getCorrespondenceMessages()
+    public function getMessages()
     {
         return $this->hasMany(CorrespondenceMessage::className(), ['correspondence__id' => 'id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     * @throws InvalidConfigException
+     */
+    public function getUsers()
+    {
+        return $this->hasMany(User::className(), ['id' => 'user__id'])
+            ->viaTable('user_correspondence', ['correspondence__id' => 'id']);
     }
 
     /**

@@ -3,6 +3,8 @@
 
 namespace app\modules\user\models;
 
+use yii\base\InvalidConfigException;
+use app\modules\home\models\Correspondence;
 use app\modules\home\models\CorrespondenceMessage;
 use app\modules\home\models\UserCorrespondence;
 use yii2mod\user\models\UserModel;
@@ -29,42 +31,41 @@ class User extends UserModel
 
     /**
      * @param bool $asArray
+     * @throws InvalidConfigException
      * @return array
      */
     public function getAllUserChatsMessages($asArray = false)
     {
-        $messages = [];
-
         // выбираем все чаты юзверя
-        $subQ = UserCorrespondence::find()
-            ->select('correspondence__id')
-            ->andFilterWhere(['=', 'user__id', Yii::$app->user->id]);
+        $subQ = $this->getCorrespondences()->select('correspondence__id');
+
+        $messages = CorrespondenceMessage::find()
+            ->select('user__id, text, correspondence__id, created_at')
+            ->andFilterWhere(['in', 'correspondence__id', $subQ]);
 
         if ($asArray) {
-            $messages = CorrespondenceMessage::find()
-                ->select('user__id, text, correspondence__id, created_at')
-                ->andFilterWhere(['in', 'correspondence__id', $subQ])
-                ->orderBy('correspondence__id')
-                ->asArray()
-                ->all();
-        }
-        else {
-            $messages = CorrespondenceMessage::find()
-                ->select('text, correspondence__id, created_at')
-                ->andFilterWhere(['in', 'correspondence__id', $subQ])
-                ->orderBy('correspondence__id')
-                ->all();
+            $messages->asArray();
         }
 
-        return $messages;
+        return $messages->all();
     }
 
     /**
      * @return ActiveQuery
      */
-    public function getCorrespondenceMessages()
+    public function getMessages()
     {
-        return $this->hasMany(CorrespondenceMessage::className(), ['correspondence__id' => 'id']);
+        return $this->hasMany(CorrespondenceMessage::className(), ['user__id' => 'id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     * @throws InvalidConfigException
+     */
+    public function getCorrespondences()
+    {
+        return $this->hasMany(Correspondence::className(), ['id' => 'correspondence__id'])
+            ->viaTable('user_correspondence', ['user__id' => 'id']);
     }
 
     /**

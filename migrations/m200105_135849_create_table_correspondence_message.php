@@ -18,7 +18,8 @@ class m200105_135849_create_table_correspondence_message extends Migration
             'user__id' => $this->integer()->notNull(),
             'correspondence__id' => $this->integer()->notNull(),
             'text' => $this->string()->notNull(),
-            'created_at' => $this->dateTime()
+            'read' => $this->boolean()->notNull()->defaultValue(false),
+            'created_at' => $this->dateTime()->notNull()
         ]);
 
         $this->createIndex(

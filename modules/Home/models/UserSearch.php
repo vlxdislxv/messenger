@@ -4,111 +4,81 @@
 namespace app\modules\home\models;
 
 use yii\base\Model;
-use yii\data\ActiveDataProvider;
 use app\modules\user\models\User;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\Expression;
 
-class UserSearch extends User
+/**
+ * @property string $username
+ */
+class UserSearch extends Model
 {
+
+    public $username;
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['username'], 'safe'],
+//            [['username'], 'required'],
+            ['username', 'string', 'max' => 255],
         ];
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function scenarios()
-    {
-        // bypass scenarios() implementation in the parent class
-        return Model::scenarios();
-    }
-
-    /**
-     * Creates data provider instance with search query applied
-     *
      * @param array $params
-     *
-     * @return ActiveDataProvider
+     * @throws InvalidConfigException
+     * @return array
      */
     public function search($params)
     {
-        $this->load($params);
+        if (!$this->load($params) || !$this->validate()) {
+            return [];
+        }
 
+        /* @var User $currUser */
+        $currUser = Yii::$app->user->identity;
 
-        if ($this->username !== '') { // поиск по пользователям
+        if (!empty($this->username)) { // поиск по пользователям
 
-            $subQ1 = UserCorrespondence::find()
-                ->select('correspondence__id')
-                ->andFilterWhere(['=', 'user__id', Yii::$app->user->id]);
+            $correspondencesQuery = $currUser->getCorrespondences()
+                ->select('correspondence__id'); // переписки пользователя
 
-            $query1 = User::find()
+            $query1 = User::find() // пользователи, с которыми есть переписка
                 ->select('user.id as id, username, correspondence__id')
-                ->joinWith('userCorrespondences')
-                ->andFilterWhere(['!=', 'user__id', Yii::$app->user->id])
-                ->andFilterWhere(['in', 'correspondence__id', $subQ1])
+                ->joinWith('correspondences')
+                ->andFilterWhere(['!=', 'user__id', $currUser->id])
+                ->andFilterWhere(['in', 'correspondence__id', $correspondencesQuery])
                 ->andFilterWhere(['like', 'username', $this->username.'%', false])
                 ->asArray();
 
-            $query = User::find()
+            $query2 = User::find()
                 ->select(['user.id as id', 'username', new Expression('(NULL) AS correspondence__id')])
                 ->asArray();
 
-            $subQ = User::find()
-                ->select('user__id')
-                ->joinWith('userCorrespondences')
-                ->andFilterWhere(['!=', 'user__id', Yii::$app->user->id])
-                ->andFilterWhere(['in', 'correspondence__id', $subQ1])
-                ->asArray();
+            $query2->andFilterWhere(['like', 'username', $this->username.'%', false]);
+            $query2->andFilterWhere(['!=', 'username', $currUser->username]);
 
-            $query->andFilterWhere(['like', 'username', $this->username.'%', false]);
-            $query->andFilterWhere(['!=', 'username', Yii::$app->user->identity->username]);
-            $query->andFilterWhere(['not in', 'id', $subQ]);
+            $query1 = $query1->union($query2);
 
-            // add conditions that should always apply here
+            return $query1->all();
 
-            $query1 = $query1->union($query);
-
-            $dataProvider = new ActiveDataProvider([
-                'query' => $query1,
-                'pagination' => [
-                    'pageSize' => 10
-                ],
-            ]);
-
-            if (!$this->validate()) {
-                // uncomment the following line if you do not want to return any records when validation fails
-                $query->where('0=1');
-                return $dataProvider;
-            }
-
-            return $dataProvider;
         } else { // выбрать контакты (тех с кем есть переписка)
-            $subQ = UserCorrespondence::find()
-                ->select('correspondence__id')
-                ->andFilterWhere(['=', 'user__id', Yii::$app->user->id]);
 
-            $query = User::find()
+            $correspondencesQuery = $currUser->getCorrespondences()
+                ->select('correspondence__id'); // переписки пользователя
+
+            $query = User::find() // пользователи, с которыми есть переписка
                 ->select('user.id as id, username, correspondence__id')
-                ->joinWith('userCorrespondences')
-                ->andFilterWhere(['!=', 'user__id', Yii::$app->user->id])
-                ->andFilterWhere(['in', 'correspondence__id', $subQ])
+                ->joinWith('correspondences', false)
+                ->andFilterWhere(['!=', 'user.id', $currUser->id])
+                ->andFilterWhere(['in', 'correspondence__id', $correspondencesQuery])
                 ->asArray();
 
-            $dataProvider = new ActiveDataProvider([
-                'query' => $query,
-                'pagination' => [
-                    'pageSize' => 10
-                ],
-            ]);
-
-            return $dataProvider;
+            return $query->all();
         }
     }
 }
