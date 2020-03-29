@@ -37,6 +37,12 @@ $this->title = 'Login';
                 Log in
             </span>
 
+            <? if ($model->hasErrors()): ?>
+                <div class="alert alert-danger">
+                    <?= Html::errorSummary($model, ['encode' => false]) ?>
+                </div>
+            <? endif; ?>
+
             <?= $form->field($model, 'login', [
                 'template' => '
                         <div data-validate="Enter Login" class="wrap-input100 validate-input">{input}

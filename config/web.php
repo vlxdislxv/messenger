@@ -13,7 +13,8 @@ $config = [
     ],
     'modules' => [
         'user' => 'app\modules\user\Module',
-        'home' => 'app\modules\home\Module'
+        'home' => 'app\modules\home\Module',
+        'api'  => 'app\modules\api\Module'
     ],
     'defaultRoute' => 'home/',
     'components' => [
@@ -63,7 +64,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\modules\user\models\User',
+            'identityClass' => 'app\models\User',
             // for update last login date for user, you can call the `afterLogin` event as follows
             'on afterLogin' => function ($event) {
                 $event->identity->updateLastLogin();

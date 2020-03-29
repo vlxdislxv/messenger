@@ -2,13 +2,7 @@
 
 namespace app\modules\user\controllers;
 
-use Yii;
-use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
 
 class DefaultController extends Controller
 {
@@ -25,6 +19,7 @@ class DefaultController extends Controller
             ],
             'signup' => [
                 'class' => 'yii2mod\user\actions\SignupAction',
+                'modelClass' => 'app\modules\user\models\SignupForm',
                 'view' => 'signup'
             ],
 //            'request-password-reset' => [

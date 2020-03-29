@@ -4,7 +4,7 @@
 namespace app\modules\home\models;
 
 use yii\base\Model;
-use app\modules\user\models\User;
+use app\models\User;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Expression;

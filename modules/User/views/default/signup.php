@@ -37,6 +37,12 @@ $this->title = 'Sign Up';
                 Sign Up
             </span>
 
+            <? if ($model->hasErrors()): ?>
+                <div class="alert alert-danger">
+                    <?= Html::errorSummary($model, ['encode' => false]) ?>
+                </div>
+            <? endif; ?>
+
             <?= $form->field($model, 'email', [
                 'template' => '
                         <div data-validate="Enter Email" class="wrap-input100 validate-input">{input}

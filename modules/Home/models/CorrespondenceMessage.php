@@ -2,7 +2,7 @@
 
 namespace app\modules\home\models;
 
-use app\modules\user\models\User;
+use app\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;

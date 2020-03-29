@@ -1,8 +1,8 @@
 <?php
 
 
-namespace app\modules\user\models;
-
+namespace app\models;
+use yii\base\Exception;
 use yii\base\InvalidConfigException;
 use app\modules\home\models\Correspondence;
 use app\modules\home\models\CorrespondenceMessage;
@@ -20,6 +20,7 @@ use Yii;
  * @property string $password_reset_token
  * @property string $email
  * @property string $auth_key
+ * @property string $access_token
  * @property int $status
  * @property int $created_at
  * @property int $updated_at
@@ -28,6 +29,39 @@ use Yii;
  */
 class User extends UserModel
 {
+
+    public function fields()
+    {
+        $fields = parent::fields();
+
+        // remove fields that contain sensitive information
+        unset($fields['auth_key'],
+            $fields['password_hash'],
+            $fields['password_reset_token'],
+            $fields['access_token'],
+            $fields['created_at'],
+            $fields['updated_at']
+        );
+
+        return $fields;
+    }
+    /**
+     * @param $token string
+     * @param $type string
+     * @return User
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        return static::findOne(['access_token' => $token]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function generateAccessToken()
+    {
+        $this->access_token = Yii::$app->getSecurity()->generateRandomString();
+    }
 
     /**
      * @param bool $asArray
